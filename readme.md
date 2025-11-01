@@ -17,3 +17,8 @@
 
 
 ![Proposed workflow diagram.jpg](diagrams/Proposed%20workflow%20diagram.jpg)
+
+
+TO DO :
+- [ ] anonimise the spreadsheet i explain logic to chat gpt 
+- [ ] start of it reading the list of names and displaying on UI 
