@@ -1,4 +1,121 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Customize toolbar */
+:root {
+  @include mat.toolbar-overrides((
+    container-background-color: #004f4f, /* dark teal/cyan */
+    container-text-color: #00dddd,       /* light cyan text */
+  ));
+}
+
+/* Entire app background is dark gray */
+body, html {
+  height: 100%;
+  margin: 0;
+  background-color: #121212;  /* dark gray / almost black */
+  color: #fff;               /* default text color */
+  font-family: "Goudy Bookletter 1911", sans-serif;
+
+}
+
+/* Container and utility classes */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.section {
+  padding: 1rem;
+  background-color: #1e1e1e; /* slightly lighter gray for cards */
+  color: #fff;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.my-3 {
+  margin: 1rem 0;
+}
+
+/* Ensure all cards have white text */
+mat-card {
+  color: #fff;
+}
+
+/* ===== Upload Component Styles ===== */
+.upload-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: #1e1e1e; /* same as card section */
+  color: #fff;
+}
+
+.instructions {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-btn {
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-btn:hover {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 221, 221, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px 5px rgba(0, 221, 221, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 221, 221, 0.7);
+  }
+}
+.button-container {
+  display: flex;
+  flex-direction: column; /* stack button and text vertically */
+  align-items: center;    /* center horizontally */
+  gap: 1rem;              /* increase spacing between button and selected text */
+}
+
+.upload-btn {
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  width: auto;            /* button keeps its natural width */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-btn:hover {
+  animation: pulse 1s infinite;
+}
+
+/* Selected file text */
+.file-name {
+  font-size: 0.9rem;       /* smaller font size */
+  font-style: italic;      /* italic */
+  color: #00dddd;          /* match theme cyan */
+  text-align: center;
+  font-weight: 400;        /* normal weight */
+  margin: 0;               /* spacing handled by container gap */
+}

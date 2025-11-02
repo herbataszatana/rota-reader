@@ -1,0 +1,17 @@
+<mat-card class="upload-card mat-elevation-z6">
+  <div class="button-container">
+    <!-- Hidden file input -->
+    <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+
+    <!-- Material button triggers file input -->
+    <button mat-raised-button color="primary" class="upload-btn" (click)="fileInput.click()">
+      <mat-icon>upload</mat-icon>
+      Upload File
+    </button>
+
+    <!-- Selected file appears below button -->
+    <p *ngIf="selectedFile" class="file-name">
+      Selected file: {{ selectedFile.name }}
+    </p>
+  </div>
+</mat-card>
