@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="Add Proposed workflow diagram.jpg">
+      <change afterPath="$PROJECT_DIR$/backend/src/services/upload.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/services/excel.service.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +60,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "uploadFileBackend",
+    "git-widget-placeholder": "readExcelBackend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
