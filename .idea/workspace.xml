@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="Add Proposed workflow diagram.jpg">
-      <change afterPath="$PROJECT_DIR$/backend/src/services/upload.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/services/excel.service.ts" beforeDir="false" />
+    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="update backend to return object consisting of list of employees their links and wks">
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761941150229</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update backend to return object consisting of list of employees their links and wks">
+      <option name="closed" value="true" />
+      <created>1762472898401</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1762472898401</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +161,7 @@
     <MESSAGE value="Add initial backend structure" />
     <MESSAGE value="Update the Excel reader" />
     <MESSAGE value="Add Proposed workflow diagram.jpg" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Proposed workflow diagram.jpg" />
+    <MESSAGE value="update backend to return object consisting of list of employees their links and wks" />
+    <option name="LAST_COMMIT_MESSAGE" value="update backend to return object consisting of list of employees their links and wks" />
   </component>
 </project>
