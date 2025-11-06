@@ -14,6 +14,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class UploadComponent {
   selectedFile?: File;
   uploadMessage = '';
+  uploadResponse: any; // store the response for debugging
 
   constructor(private http: HttpClient) {}
 
@@ -35,8 +36,19 @@ export class UploadComponent {
     this.http.post('http://localhost:3000/api/upload', formData)
       .subscribe({
         next: (res: any) => {
-          console.log('✅ Upload response:', res);
-          this.uploadMessage = 'File uploaded successfully!';
+          console.log('✅ Upload response:', res); // full JSON response
+          this.uploadResponse = res; // store response for further use
+          this.uploadMessage = `Selected file: ${this.selectedFile?.name} uploaded successfully!`;
+
+          // Optional: log links and employees separately
+          if (res.links && Array.isArray(res.links)) {
+            res.links.forEach((link: any, index: number) => {
+              console.log(`🔗 ${link.link}:`);
+              link.employees.forEach((emp: any) => {
+                console.log(`   - ${emp.name}, wk: ${emp.wk}, totalHours: ${emp.totalHours}`);
+              });
+            });
+          }
         },
         error: (err) => {
           console.error('❌ Upload error:', err);
