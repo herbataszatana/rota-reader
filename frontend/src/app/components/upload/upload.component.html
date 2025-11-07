@@ -1,5 +1,4 @@
 <div class="upload-container">
-  <!-- Upload Card -->
   <mat-card class="upload-card mat-elevation-z6">
     <div class="button-container">
       <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
@@ -16,6 +15,7 @@
     <p *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
   </mat-card>
 
-  <!-- Display component -->
-  <app-display [links]="filteredLinks"></app-display>
+  <pre>{{ links | json }}</pre>
+  <!-- DisplayComponent shows employees -->
+  <app-display [links]="links"></app-display>
 </div>
