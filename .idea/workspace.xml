@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="update backend to return object consisting of list of employees their links and wks">
+    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="update frontend to display the employees in the searchable grid">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/services/upload.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/services/upload.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,7 +140,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762472898401</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="update frontend to display the employees in the searchable grid">
+      <option name="closed" value="true" />
+      <created>1762551702737</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1762551702737</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +172,7 @@
     <MESSAGE value="Update the Excel reader" />
     <MESSAGE value="Add Proposed workflow diagram.jpg" />
     <MESSAGE value="update backend to return object consisting of list of employees their links and wks" />
-    <option name="LAST_COMMIT_MESSAGE" value="update backend to return object consisting of list of employees their links and wks" />
+    <MESSAGE value="update frontend to display the employees in the searchable grid" />
+    <option name="LAST_COMMIT_MESSAGE" value="update frontend to display the employees in the searchable grid" />
   </component>
 </project>

@@ -9,6 +9,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { startWith } from 'rxjs';
 import { MatDivider } from '@angular/material/divider';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import {DisplayComponent} from '../display/display.component';
 
 @Component({
   selector: 'app-upload',
@@ -22,7 +23,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     MatIconModule,
     HttpClientModule,
     MatDivider,
-    MatProgressSpinner
+    MatProgressSpinner,
+    DisplayComponent
   ],
   templateUrl: './upload.component.html'
 })
