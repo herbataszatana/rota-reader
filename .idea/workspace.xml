@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="update so if person exist then other links don't show the error message">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/main/main.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/main/main.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/main/main.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/main/main.component.ts" afterDir="false" />
+    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="display component to make post with selected employee">
       <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/upload/upload.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762552590045</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="display component to make post with selected employee">
+      <option name="closed" value="true" />
+      <created>1762554443705</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1762554443705</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,6 +200,7 @@
     <MESSAGE value="update frontend to display the employees in the searchable grid" />
     <MESSAGE value="separate upload from employees display in frontend" />
     <MESSAGE value="update so if person exist then other links don't show the error message" />
-    <option name="LAST_COMMIT_MESSAGE" value="update so if person exist then other links don't show the error message" />
+    <MESSAGE value="display component to make post with selected employee" />
+    <option name="LAST_COMMIT_MESSAGE" value="display component to make post with selected employee" />
   </component>
 </project>
