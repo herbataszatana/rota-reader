@@ -1,59 +1,99 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NgIf } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { startWith } from 'rxjs';
+import { MatDivider } from '@angular/material/divider';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule, NgIf, HttpClientModule],
-  templateUrl: './upload.component.html',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    HttpClientModule,
+    MatDivider,
+    MatProgressSpinner
+  ],
+  templateUrl: './upload.component.html'
 })
 export class UploadComponent {
   selectedFile?: File;
   uploadMessage = '';
-  uploadResponse: any; // store the response for debugging
+  isLoading = false;
+
+  links: any[] = []; // original links + employees
+  filteredLinks: any[] = []; // links filtered by search
+  employeeSearchCtrl = new FormControl('');
 
   constructor(private http: HttpClient) {}
 
+  get hasEmployees(): boolean {
+    return this.filteredLinks.some(link => link.employees.length > 0);
+  }
+
+  get searchTerm(): string {
+    return this.employeeSearchCtrl.value || '';
+  }
+
   onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement | null;
+    const input = event.target as HTMLInputElement;
     if (input?.files?.length) {
       this.selectedFile = input.files[0];
-      console.log('Selected file:', this.selectedFile);
       this.uploadFile();
     }
   }
 
-  uploadFile() {
+  async uploadFile() {
     if (!this.selectedFile) return;
 
     const formData = new FormData();
     formData.append('file', this.selectedFile);
 
-    this.http.post('http://localhost:3000/api/upload', formData)
-      .subscribe({
-        next: (res: any) => {
-          console.log('✅ Upload response:', res); // full JSON response
-          this.uploadResponse = res; // store response for further use
-          this.uploadMessage = `Selected file: ${this.selectedFile?.name} uploaded successfully!`;
+    this.isLoading = true;
+    this.uploadMessage = '';
 
-          // Optional: log links and employees separately
-          if (res.links && Array.isArray(res.links)) {
-            res.links.forEach((link: any, index: number) => {
-              console.log(`🔗 ${link.link}:`);
-              link.employees.forEach((emp: any) => {
-                console.log(`   - ${emp.name}, wk: ${emp.wk}, totalHours: ${emp.totalHours}`);
-              });
-            });
-          }
-        },
-        error: (err) => {
-          console.error('❌ Upload error:', err);
-          this.uploadMessage = 'Upload failed. See console for details.';
-        }
+    try {
+      const res: any = await this.http
+        .post('http://localhost:3000/api/upload', formData)
+        .toPromise();
+
+      this.uploadMessage = `${this.selectedFile?.name} uploaded successfully!`;
+      this.links = res?.result?.links ?? [];
+      this.filteredLinks = [...this.links];
+
+      this.setupSearchFilter();
+    } catch (err) {
+      console.error('Upload failed', err);
+      this.uploadMessage = 'Upload failed. See console for details.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  setupSearchFilter() {
+    this.employeeSearchCtrl.valueChanges
+      .pipe(startWith(''))
+      .subscribe(value => {
+        const filter = (value || '').toLowerCase();
+
+        // Map each link and filter its employees
+        this.filteredLinks = this.links.map(link => ({
+          ...link,
+          employees: link.employees.filter((e: any) =>
+            e.name.toLowerCase().includes(filter)
+          )
+        }));
       });
   }
+
 }

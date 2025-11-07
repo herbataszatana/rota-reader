@@ -1,18 +1,54 @@
-<mat-card class="upload-card mat-elevation-z6">
-  <div class="button-container">
-    <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+<div class="upload-container">
+  <!-- Upload Card -->
+  <mat-card class="upload-card mat-elevation-z6">
+    <div class="button-container">
+      <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+      <button mat-raised-button color="primary" (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon> Upload File
+      </button>
+    </div>
 
-    <button mat-raised-button color="primary" class="upload-btn" (click)="fileInput.click()">
-      <mat-icon>upload</mat-icon>
-      Upload File
-    </button>
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-progress-spinner mode="indeterminate" diameter="40" color="primary"></mat-progress-spinner>
+      <p>Processing rota, please wait...</p>
+    </div>
 
-    <p *ngIf="selectedFile" class="file-name">
-      Selected file: {{ selectedFile.name }}
-    </p>
+    <p *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
+  </mat-card>
 
-    <p *ngIf="uploadMessage" class="upload-msg">
-      {{ uploadMessage }}
-    </p>
-  </div>
-</mat-card>
+  <!-- Employees Card -->
+  <mat-card class="mat-elevation-z4 section" *ngIf="!isLoading && filteredLinks.length > 0">
+    <div class="card-header-row">
+      <mat-card-title>Employees</mat-card-title>
+      <mat-form-field class="search-field" appearance="outline">
+        <input matInput placeholder="Search by name" [formControl]="employeeSearchCtrl" />
+      </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <ng-container *ngIf="hasEmployees; else noResults">
+        <div *ngFor="let link of filteredLinks" class="link-group">
+          <p style="color: #006a6a">{{ link.link }}</p>
+          <div class="employee-grid">
+            <ng-container *ngIf="link.employees.length > 0; else empNotFound">
+              <button mat-stroked-button color="primary" *ngFor="let emp of link.employees">
+                {{ emp.name }}
+              </button>
+            </ng-container>
+            <ng-template #empNotFound>
+              <p>{{ employeeSearchCtrl.value }} not found</p>
+            </ng-template>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <ng-template #noResults>
+        <p *ngIf="searchTerm">No employees found matching "{{ searchTerm }}"</p>
+        <p *ngIf="!searchTerm">No employees found.</p>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>

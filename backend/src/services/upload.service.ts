@@ -4,7 +4,6 @@ import fs from 'fs/promises';
 interface Employee {
     name: string;
     wk: number;
-    totalHours: number;
 }
 
 interface Link {
@@ -19,7 +18,7 @@ export async function parseExcelFile(filePath: string) {
     await workbook.xlsx.readFile(filePath);
 
     // Find the "Rooster" sheet
-    const roosterSheet = workbook.getWorksheet('Rooster');
+    const roosterSheet = workbook.getWorksheet('Roster');
 
     if (!roosterSheet) {
         throw new Error('Sheet "Rooster" not found in the workbook');
@@ -134,12 +133,10 @@ function parseRoosterSheet(sheet: ExcelJS.Worksheet): Link[] {
 
         // Parse the employee data
         const wk = parseInt(wkValue, 10) || 0;
-        const totalHours = parseFloat(totalHoursValue) || 0;
 
         currentLink.employees.push({
             name: nameValue,
             wk: wk,
-            totalHours: totalHours
         });
     });
 
