@@ -79,9 +79,9 @@ export class DisplayComponent {
       wk: emp.wk
     };
     console.log("payload: " + JSON.stringify(payload));
-    this.http.post('http://localhost:3000/api/employees', payload)
+    this.http.post('http://localhost:3000/api/selectEmployee', payload)
       .subscribe({
-        next: res => console.log('All employees sent', res),
+        next: res => console.log('Selected employees sent', res),
         error: err => console.error('Error sending employees', err)
       });
   }
