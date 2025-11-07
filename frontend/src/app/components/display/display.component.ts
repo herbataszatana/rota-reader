@@ -51,12 +51,14 @@ export class DisplayComponent implements OnChanges {
       .subscribe(value => {
         const filter = (value || '').toLowerCase();
 
-        this.filteredLinks = this.links.map(link => ({
-          ...link,
-          employees: link.employees.filter((e: any) =>
-            e.name.toLowerCase().includes(filter)
-          )
-        }));
+        // Filter employees inside each link
+        this.filteredLinks = this.links
+          .map(link => ({
+            ...link,
+            employees: link.employees.filter((e: any) =>
+              e.name.toLowerCase().includes(filter)
+            )
+          }));
       });
   }
 }
