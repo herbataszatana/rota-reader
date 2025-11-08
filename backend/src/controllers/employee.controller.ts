@@ -63,7 +63,7 @@ export async function handleSelectEmployee(
 
         console.log("✅ Matched sheet:", sheet.name);
 
-        const roosterSheet = workbook.getWorksheet('Rooster');
+        const roosterSheet = workbook.getWorksheet('Roster');
         const wcDate = roosterSheet ? extractFirstWeekCommencing(roosterSheet) : null;
         if (!wcDate) {
             return reply.code(400).send({ error: "Could not find the first week commencing date in Rooster sheet" });

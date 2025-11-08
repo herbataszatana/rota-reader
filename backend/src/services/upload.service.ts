@@ -16,7 +16,7 @@ export async function parseExcelFile(filePath: string) {
     await workbook.xlsx.readFile(filePath);
 
     // Find the "Rooster" sheet
-    const roosterSheet = workbook.getWorksheet('Rooster');
+    const roosterSheet = workbook.getWorksheet('Roster');
 
     if (!roosterSheet) {
         throw new Error('Sheet "Rooster" not found in the workbook');
