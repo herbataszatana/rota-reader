@@ -31,14 +31,13 @@ interface WeekData {
 
 // Sunday-first week
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const TOTAL_WEEKS = 42;
+const WEEKS_TO_COLLECT = 26;
 
 export async function handleSelectEmployee(
     request: FastifyRequest<{ Body: EmployeeSelection }>,
     reply: FastifyReply
 ) {
     const { name, link, wk } = request.body;
-
     console.log("📩 Employee selected:", request.body);
 
     const filePath = getUploadedFilePath();
@@ -49,8 +48,6 @@ export async function handleSelectEmployee(
     try {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(filePath);
-
-        console.log("📄 Available sheets:", workbook.worksheets.map(s => s.name));
 
         const sheet = workbook.worksheets.find(s =>
             s.name.toLowerCase().includes(link.toLowerCase())
@@ -68,19 +65,91 @@ export async function handleSelectEmployee(
 
         const roosterSheet = workbook.getWorksheet('Rooster');
         const wcDate = roosterSheet ? extractFirstWeekCommencing(roosterSheet) : null;
-
         if (!wcDate) {
             return reply.code(400).send({ error: "Could not find the first week commencing date in Rooster sheet" });
         }
 
-        const firstWeekDate = new Date(wcDate); // WC = Sunday
-        console.log("📅 First week (Sunday):", formatDate(firstWeekDate));
+        const firstWeekDate = new Date(wcDate);
 
-        const shiftsData = parseShifts(sheet, wk, firstWeekDate);
+        // Build array of rows that have valid week numbers
+        const weekRows: { row: ExcelJS.Row; weekNumber: number }[] = [];
+        for (let i = 1; i <= sheet.rowCount; i++) {
+            const row = sheet.getRow(i);
+            const cellVal = getCellValue(row.getCell(1));
+            if (!cellVal) continue;
+            const weekNumber = parseInt(cellVal);
+            if (!isNaN(weekNumber)) {
+                weekRows.push({ row, weekNumber });
+            }
+        }
 
-        // Log first week to console
-        if (shiftsData.length > 0) {
-            console.log("📅 First week data:", JSON.stringify(shiftsData[0], null, 2));
+        if (weekRows.length === 0) {
+            return reply.code(400).send({ error: "No valid week rows found in sheet" });
+        }
+
+        // Start index: find first row that matches selected week
+        let startIndex = weekRows.findIndex(r => r.weekNumber === wk);
+        if (startIndex === -1) startIndex = 0;
+
+        const shiftsData: WeekData[] = [];
+        for (let i = 0; i < WEEKS_TO_COLLECT; i++) {
+            const index = (startIndex + i) % weekRows.length;
+            const { row, weekNumber } = weekRows[index];
+            const totalHours = getCellValue(row.getCell(2));
+
+            const shifts: Shift[] = [];
+
+            for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+                const baseCol = 3 + (dayIndex * 4);
+                const onTime = getCellValue(row.getCell(baseCol));
+                const offTime = getCellValue(row.getCell(baseCol + 1));
+                const turn = getCellValue(row.getCell(baseCol + 2));
+                const dayTotal = getCellValue(row.getCell(baseCol + 3));
+
+                const isRestDay = turn === 'RD' || (!onTime && !offTime && !turn);
+                const endsNextDay = checkIfEndsNextDay(onTime, offTime);
+
+                const shiftDate = new Date(firstWeekDate);
+                shiftDate.setDate(firstWeekDate.getDate() + (i * 7) + dayIndex);
+
+                let startDateTime: string | null = null;
+                let endDateTime: string | null = null;
+
+                if (!isRestDay && onTime && offTime) {
+                    startDateTime = `${formatDate(shiftDate)}T${onTime}:00`;
+                    if (endsNextDay) {
+                        const endDate = new Date(shiftDate);
+                        endDate.setDate(shiftDate.getDate() + 1);
+                        endDateTime = `${formatDate(endDate)}T${offTime}:00`;
+                    } else {
+                        endDateTime = `${formatDate(shiftDate)}T${offTime}:00`;
+                    }
+                }
+
+                shifts.push({
+                    weekNumber,
+                    day: DAYS[dayIndex],
+                    date: formatDate(shiftDate),
+                    startTime: isRestDay ? null : onTime,
+                    endTime: isRestDay ? null : offTime,
+                    startDateTime,
+                    endDateTime,
+                    reference: isRestDay ? null : turn,
+                    totalHours: isRestDay ? null : dayTotal,
+                    isRestDay,
+                    endsNextDay
+                });
+            }
+
+            const weekCommencing = new Date(firstWeekDate);
+            weekCommencing.setDate(firstWeekDate.getDate() + (i * 7));
+
+            shiftsData.push({
+                weekNumber,
+                weekCommencing: formatDate(weekCommencing),
+                totalHours,
+                shifts
+            });
         }
 
         return reply.send({
@@ -99,109 +168,20 @@ export async function handleSelectEmployee(
 
 // ------------------ HELPERS ------------------ //
 
-function parseShifts(sheet: ExcelJS.Worksheet, startWeek: number, firstWeekDate: Date): WeekData[] {
-    const weeksData: WeekData[] = [];
-    const weeksToCollect = 26;
-
-    let currentWeek = startWeek;
-    let weeksCollected = 0;
-
-    while (weeksCollected < weeksToCollect) {
-        const rowIndex = currentWeek + 2; // adjust for Excel layout
-        const row = sheet.getRow(rowIndex);
-
-        if (!row || !row.getCell(1).value) {
-            if (currentWeek > 1) {
-                currentWeek = 1;
-                continue;
-            } else {
-                break;
-            }
-        }
-
-        const weekNumber = parseInt(getCellValue(row.getCell(1))) || currentWeek;
-        const totalHours = getCellValue(row.getCell(2));
-
-        const shifts: Shift[] = [];
-
-        for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-            const baseCol = 3 + (dayIndex * 4);
-            const onTime = getCellValue(row.getCell(baseCol));
-            const offTime = getCellValue(row.getCell(baseCol + 1));
-            const turn = getCellValue(row.getCell(baseCol + 2));
-            const dayTotal = getCellValue(row.getCell(baseCol + 3));
-
-            const isRestDay = turn === 'RD' || (!onTime && !offTime && !turn);
-            const endsNextDay = checkIfEndsNextDay(onTime, offTime);
-
-            const shiftDate = new Date(firstWeekDate);
-            shiftDate.setDate(firstWeekDate.getDate() + ((currentWeek - 1) * 7) + dayIndex);
-
-            let startDateTime: string | null = null;
-            let endDateTime: string | null = null;
-
-            if (!isRestDay && onTime && offTime) {
-                startDateTime = `${formatDate(shiftDate)}T${onTime}:00`;
-                if (endsNextDay) {
-                    const endDate = new Date(shiftDate);
-                    endDate.setDate(shiftDate.getDate() + 1);
-                    endDateTime = `${formatDate(endDate)}T${offTime}:00`;
-                } else {
-                    endDateTime = `${formatDate(shiftDate)}T${offTime}:00`;
-                }
-            }
-
-            shifts.push({
-                weekNumber,
-                day: DAYS[dayIndex],
-                date: formatDate(shiftDate),
-                startTime: isRestDay ? null : onTime,
-                endTime: isRestDay ? null : offTime,
-                startDateTime,
-                endDateTime,
-                reference: isRestDay ? null : turn,
-                totalHours: isRestDay ? null : dayTotal,
-                isRestDay,
-                endsNextDay
-            });
-        }
-
-        const weekCommencing = new Date(firstWeekDate);
-        weekCommencing.setDate(firstWeekDate.getDate() + ((currentWeek - 1) * 7));
-
-        weeksData.push({
-            weekNumber,
-            weekCommencing: formatDate(weekCommencing),
-            totalHours,
-            shifts
-        });
-
-        weeksCollected++;
-        currentWeek++;
-        if (currentWeek > TOTAL_WEEKS) currentWeek = 1;
-    }
-
-    return weeksData;
-}
-
 function getCellValue(cell: ExcelJS.Cell): string {
     if (!cell || cell.value === null || cell.value === undefined) return '';
-
     if (typeof cell.value === 'string') return cell.value.trim();
     if (typeof cell.value === 'object') {
         if ('richText' in cell.value) return cell.value.richText.map(r => r.text).join('').trim();
         if ('text' in cell.value) return (cell.value.text as string).trim();
     }
-
     return String(cell.value).trim();
 }
 
 function checkIfEndsNextDay(startTime: string | null, endTime: string | null): boolean {
     if (!startTime || !endTime) return false;
-
     const startHour = parseInt(startTime.split(':')[0]);
     const endHour = parseInt(endTime.split(':')[0]);
-
     return endHour < startHour || (endHour >= 0 && endHour < 6 && startHour >= 12);
 }
 
@@ -209,21 +189,17 @@ function extractFirstWeekCommencing(roosterSheet: ExcelJS.Worksheet): Date | nul
     const row = roosterSheet.getRow(2);
     const cell = row.getCell(1);
     let text = '';
-
     if (!cell || cell.value === null) return null;
-
     if (typeof cell.value === 'string') text = cell.value.trim();
     else if (typeof cell.value === 'object') {
         if ('richText' in cell.value) text = cell.value.richText.map(r => r.text).join('').trim();
         else if ('text' in cell.value) text = (cell.value.text as string).trim();
         else return null;
     }
-
     const match = text.match(/w\/?c\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
     if (!match) return null;
-
     const [day, month, year] = match[1].split('/').map(Number);
-    return new Date(year, month - 1, day); // Sunday = first day of rota
+    return new Date(year, month - 1, day); // Sunday = start of rota
 }
 
 function formatDate(date: Date): string {
@@ -234,4 +210,4 @@ function formatDate(date: Date): string {
 }
 
 // Export helpers for testing
-export { parseShifts, checkIfEndsNextDay, extractFirstWeekCommencing, formatDate };
+export { checkIfEndsNextDay, extractFirstWeekCommencing, formatDate };
