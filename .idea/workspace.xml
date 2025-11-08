@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="comment out debbuger">
+    <list default="true" id="280fc72b-0523-451e-a7bd-78eedbf16823" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/src/controllers/employee.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/routes/employee.routes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/state/upload.state.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/controllers/upload.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/services/upload.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/services/upload.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/components/display/display.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,45 +27,34 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="readExcelBackend" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;herbataszatana&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "herbataszatana"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/herbataszatana/rota-reader.git&quot;,
-    &quot;accountId&quot;: &quot;c1217b75-e97a-44d6-8c10-a03db53b9030&quot;
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/herbataszatana/rota-reader.git",
+    "accountId": "c1217b75-e97a-44d6-8c10-a03db53b9030"
   }
-}</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 5
-}</component>
-  <component name="ProjectId" id="34qIHdAOl3QU66uwb0JT2wTBKVj" />
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="35CMkkBAOCpF1H5npX2bn3Dg3K8" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "JavaScript Debug.127.0.0.1:3000.executor": "Debug",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -70,13 +65,6 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Swiat\WebstormProjects\rota-reader\diagrams" />
-      <recent name="C:\Users\Swiat\WebstormProjects\rota-reader\backend\src" />
-      <recent name="C:\Users\Swiat\WebstormProjects\rota-reader\backend\src\servers" />
-    </key>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,131 +74,16 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="233bc475-2038-4ba9-abed-a7f48de87ed1" name="Changes" comment="" />
-      <created>1761934589245</created>
+      <changelist id="280fc72b-0523-451e-a7bd-78eedbf16823" name="Changes" comment="" />
+      <created>1762609750096</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1761934589245</updated>
-      <workItem from="1761934590327" duration="8747000" />
-      <workItem from="1762002056973" duration="666000" />
+      <updated>1762609750096</updated>
+      <workItem from="1762609752562" duration="4379000" />
     </task>
-    <task id="LOCAL-00001" summary="Old gitignore file">
-      <option name="closed" value="true" />
-      <created>1761934676622</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1761934676622</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Add skeleton frontend app">
-      <option name="closed" value="true" />
-      <created>1761936123884</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1761936123884</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Add initial backend structure">
-      <option name="closed" value="true" />
-      <created>1761937149246</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1761937149246</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Update the Excel reader">
-      <option name="closed" value="true" />
-      <created>1761938154860</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1761938154860</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Add Proposed workflow diagram.jpg">
-      <option name="closed" value="true" />
-      <created>1761941150229</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1761941150229</updated>
-    </task>
-    <task id="LOCAL-00006" summary="update backend to return object consisting of list of employees their links and wks">
-      <option name="closed" value="true" />
-      <created>1762472898401</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1762472898401</updated>
-    </task>
-    <task id="LOCAL-00007" summary="update frontend to display the employees in the searchable grid">
-      <option name="closed" value="true" />
-      <created>1762551702737</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1762551702737</updated>
-    </task>
-    <task id="LOCAL-00008" summary="separate upload from employees display in frontend">
-      <option name="closed" value="true" />
-      <created>1762552513401</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1762552513401</updated>
-    </task>
-    <task id="LOCAL-00009" summary="update so if person exist then other links don't show the error message">
-      <option name="closed" value="true" />
-      <created>1762552590045</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1762552590045</updated>
-    </task>
-    <task id="LOCAL-00010" summary="display component to make post with selected employee">
-      <option name="closed" value="true" />
-      <created>1762554443705</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1762554443705</updated>
-    </task>
-    <task id="LOCAL-00011" summary="comment out debbuger">
-      <option name="closed" value="true" />
-      <created>1762554490361</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1762554490361</updated>
-    </task>
-    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Old gitignore file" />
-    <MESSAGE value="Add skeleton frontend app" />
-    <MESSAGE value="Add initial backend structure" />
-    <MESSAGE value="Update the Excel reader" />
-    <MESSAGE value="Add Proposed workflow diagram.jpg" />
-    <MESSAGE value="update backend to return object consisting of list of employees their links and wks" />
-    <MESSAGE value="update frontend to display the employees in the searchable grid" />
-    <MESSAGE value="separate upload from employees display in frontend" />
-    <MESSAGE value="update so if person exist then other links don't show the error message" />
-    <MESSAGE value="display component to make post with selected employee" />
-    <MESSAGE value="comment out debbuger" />
-    <option name="LAST_COMMIT_MESSAGE" value="comment out debbuger" />
   </component>
 </project>

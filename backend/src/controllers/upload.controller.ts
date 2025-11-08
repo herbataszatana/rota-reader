@@ -1,4 +1,5 @@
-// src/controllers/upload.controller.ts
+import { setUploadedFilePath } from "../state/upload.state.js";
+
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { MultipartFile } from '@fastify/multipart';
 import fs from 'fs/promises';
@@ -25,6 +26,7 @@ export async function handleFileUpload(request: FastifyRequest, reply: FastifyRe
                 await fs.writeFile(uploadPath, buffer);
                 filePath = uploadPath;
                 fileFound = true;
+                setUploadedFilePath(filePath);
             }
         }
 
@@ -33,6 +35,7 @@ export async function handleFileUpload(request: FastifyRequest, reply: FastifyRe
         }
 
         const result = await parseExcelFile(filePath);
+        setUploadedFilePath(filePath);
         console.log("📤 about to send reply:", JSON.stringify(result, null, 2));
 
         return reply.send({

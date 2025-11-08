@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import { uploadRoutes } from './routes/upload.routes.js';
+import {employeeRoutes} from "./routes/employee.routes.js";
 
 const server = Fastify({ logger: true });
 
@@ -13,6 +14,7 @@ await server.register(multipart, {
 
 // Register routes
 await server.register(uploadRoutes, { prefix: '/api/upload' });
+await server.register(employeeRoutes, { prefix: '/api' });
 
 const PORT = 3000;
 server.listen({ port: PORT }, (err, address) => {
