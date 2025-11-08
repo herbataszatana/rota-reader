@@ -36,7 +36,6 @@ export async function handleFileUpload(request: FastifyRequest, reply: FastifyRe
 
         const result = await parseExcelFile(filePath);
         setUploadedFilePath(filePath);
-        console.log("📤 about to send reply:", JSON.stringify(result, null, 2));
 
         return reply.send({
             message: 'File processed successfully',
