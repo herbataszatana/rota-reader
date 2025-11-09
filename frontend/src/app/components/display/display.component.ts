@@ -11,7 +11,7 @@ import { startWith } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { DateAdapter } from '@angular/material/core';
 export interface Employee {
   name: string;
   link: string;
@@ -51,8 +51,14 @@ export class DisplayComponent {
   startDate: Date | null = null;
   endDate: Date | null = null;
 
-  constructor(private http: HttpClient) {}
 
+  constructor(private http: HttpClient, private dateAdapter: DateAdapter<Date>) {}
+  setUkLocale() {
+    this.dateAdapter.setLocale('en-GB');
+  }
+  ngOnInit() {
+    this.setUkLocale()
+  }
   ngOnChanges() {
     this.filteredLinks = [...this.links];
     this.setupSearchFilter();
