@@ -9,13 +9,15 @@
 
     <div *ngIf="isLoading" class="spinner-container">
       <mat-progress-spinner mode="indeterminate" diameter="40" color="primary"></mat-progress-spinner>
-      <p>Processing rota, please wait...</p>
+      <p style="color:#006a6a;">Processing rota, please wait...</p>
     </div>
 
-    <p *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
+    <p style="color:#006a6a;" *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
   </mat-card>
 
   <!-- <pre>{{ links | json }}</pre> -->
   <!-- DisplayComponent shows employees -->
-  <app-display [links]="links"></app-display>
+
+    <app-display [links]="links"></app-display>
+
 </div>

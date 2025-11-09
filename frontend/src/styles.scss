@@ -176,3 +176,18 @@ mat-card {
 .link-group {
   margin-bottom: 1rem;
 }
+
+
+/* Space between the date picker card and employee card */
+app-display mat-card {
+  margin-bottom: 1rem;
+}
+.date-range-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.date-range-row mat-form-field {
+  width: 200px; /* ✅ fixed clean size */
+}

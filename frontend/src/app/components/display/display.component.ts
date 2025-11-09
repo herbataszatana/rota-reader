@@ -50,18 +50,19 @@ export class DisplayComponent {
   // Date range
   startDate: Date | null = null;
   endDate: Date | null = null;
-
-
+  rosterWC: string | null = null;
   constructor(private http: HttpClient, private dateAdapter: DateAdapter<Date>) {}
   setUkLocale() {
     this.dateAdapter.setLocale('en-GB');
   }
   ngOnInit() {
     this.setUkLocale()
+    this.extractRosterWC();
   }
   ngOnChanges() {
     this.filteredLinks = [...this.links];
     this.setupSearchFilter();
+    this.extractRosterWC();
   }
 
   get hasEmployees(): boolean {
@@ -111,5 +112,18 @@ export class DisplayComponent {
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+  }
+
+  extractRosterWC() {
+    if (this.links.length > 0 && this.links[0].wk) {
+      // wk likely looks like YYYY-MM-DD already
+      const date = new Date(this.links[0].wk);
+      if (!isNaN(date.getTime())) {
+        this.rosterWC =
+            `${String(date.getDate()).padStart(2,'0')}/` +
+            `${String(date.getMonth() + 1).padStart(2,'0')}/` +
+            `${date.getFullYear()}`;
+      }
+    }
   }
 }
