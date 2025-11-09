@@ -1,3 +1,4 @@
+// employee.controller.ts
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import ExcelJS from 'exceljs';
 import { getUploadedFilePath } from "../state/upload.state.js";
@@ -32,7 +33,8 @@ interface WeekData {
 }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const WEEKS_TO_COLLECT = 26;
+const DEFAULT_WEEKS = 26;
+const MAX_WEEKS = 52;
 
 export async function handleSelectEmployee(
     request: FastifyRequest<{ Body: EmployeeSelection }>,
@@ -64,7 +66,7 @@ export async function handleSelectEmployee(
         const rosterSheet = workbook.getWorksheet('Roster');
         const wcDate = rosterSheet ? extractFirstWeekCommencing(rosterSheet) : null;
         if (!wcDate) return reply.code(400).send({ error: "Could not find first week commencing date" });
-        const firstWeekDate = new Date(wcDate);
+        const rosterStartDate = new Date(wcDate);
 
         // Parse all valid week rows from sheet
         const weekRows: { row: ExcelJS.Row; weekNumber: number }[] = [];
@@ -83,12 +85,36 @@ export async function handleSelectEmployee(
         if (startIndex === -1) startIndex = 0;
 
         // Convert date filters
-        const startFilter = startDate ? new Date(startDate) : null;
+        const startFilter = startDate ? new Date(startDate) : rosterStartDate;
         const endFilter = endDate ? new Date(endDate) : null;
+
+        // Case: both start and end before roster start
+        if (endFilter && endFilter < rosterStartDate) {
+            return reply.code(400).send({
+                error: "Selected dates fall before the roster weeks start",
+                rosterStartDate: formatDate(rosterStartDate)
+            });
+        }
+
+        // Determine weeks to collect
+        let weeksToCollect = DEFAULT_WEEKS; // default
+        let warningMessage: string | null = null;
+        if (endFilter) {
+            const diffInMs = endFilter.getTime() - rosterStartDate.getTime();
+            const diffInWeeks = Math.ceil(diffInMs / (1000 * 60 * 60 * 24 * 7));
+            weeksToCollect = Math.max(diffInWeeks + 1, DEFAULT_WEEKS);
+
+            if (weeksToCollect > MAX_WEEKS) {
+                weeksToCollect = MAX_WEEKS;
+                const lastAllowedDate = new Date(rosterStartDate);
+                lastAllowedDate.setDate(rosterStartDate.getDate() + (MAX_WEEKS * 7) - 1);
+                warningMessage = `Only ${MAX_WEEKS} weeks allowed from Roster WC ${formatDate(rosterStartDate)}. Results displayed until ${formatDate(lastAllowedDate)}.`;
+            }
+        }
 
         const shiftsData: WeekData[] = [];
 
-        for (let i = 0; i < WEEKS_TO_COLLECT; i++) {
+        for (let i = 0; i < weeksToCollect; i++) {
             const index = (startIndex + i) % weekRows.length;
             const { row, weekNumber } = weekRows[index];
             const totalHours = getCellValue(row.getCell(2));
@@ -105,10 +131,13 @@ export async function handleSelectEmployee(
                 const isRestDay = turn === 'RD' || (!onTime && !offTime && !turn);
                 const endsNextDay = checkIfEndsNextDay(onTime, offTime);
 
-                const shiftDate = new Date(firstWeekDate);
-                shiftDate.setDate(firstWeekDate.getDate() + (i * 7) + dayIndex);
+                const shiftDate = new Date(rosterStartDate);
+                shiftDate.setDate(rosterStartDate.getDate() + (i * 7) + dayIndex);
 
-                // Skip shift if outside date filter
+                // Skip if before roster start
+                if (shiftDate < rosterStartDate) continue;
+
+                // Skip shift if outside user date filter
                 if ((startFilter && shiftDate < startFilter) || (endFilter && shiftDate > endFilter)) continue;
 
                 let startDateTime: string | null = null;
@@ -139,11 +168,10 @@ export async function handleSelectEmployee(
                 });
             }
 
-            // Skip empty weeks due to date filter
             if (shifts.length === 0) continue;
 
-            const weekCommencing = new Date(firstWeekDate);
-            weekCommencing.setDate(firstWeekDate.getDate() + (i * 7));
+            const weekCommencing = new Date(rosterStartDate);
+            weekCommencing.setDate(rosterStartDate.getDate() + (i * 7));
 
             shiftsData.push({
                 weekNumber,
@@ -153,13 +181,19 @@ export async function handleSelectEmployee(
             });
         }
 
-        return reply.send({
+        const responsePayload: any = {
             success: true,
             message: `Retrieved ${shiftsData.length} weeks of shifts for ${name}`,
             selectedEmployee: { name, link, wk, startDate, endDate },
             currentWeek: wk,
             weeksData: shiftsData
-        });
+        };
+
+        if (warningMessage) {
+            responsePayload.warning = warningMessage;
+        }
+
+        return reply.send(responsePayload);
 
     } catch (err) {
         console.error("❌ Error reading Excel file:", err);
