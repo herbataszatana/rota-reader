@@ -19,9 +19,9 @@ export interface Employee {
 }
 
 export interface Link {
-  link: string;
-  wk?: string;
-  employees: Employee[];
+  link: string
+  wk?: string
+  employees: Employee[]
 }
 
 @Component({
