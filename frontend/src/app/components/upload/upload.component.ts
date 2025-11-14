@@ -1,5 +1,5 @@
 // src/app/components/upload/upload.component.ts
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { DisplayComponent, Link } from '../display/display.component';
+
+import { Link } from '../display/display.component';
 
 @Component({
   selector: 'app-upload',
@@ -21,16 +22,16 @@ import { DisplayComponent, Link } from '../display/display.component';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    HttpClientModule,
-    DisplayComponent
+    HttpClientModule
   ],
   templateUrl: './upload.component.html'
 })
 export class UploadComponent {
+  @Output() linksChange = new EventEmitter<Link[]>();
+
   selectedFile?: File;
   uploadMessage = '';
   isLoading = false;
-  links: Link[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -44,6 +45,7 @@ export class UploadComponent {
 
   async uploadFile() {
     if (!this.selectedFile) return;
+
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     this.isLoading = true;
@@ -51,10 +53,12 @@ export class UploadComponent {
 
     try {
       const res = await this.http
-        .post<{ result: { links: Link[] } }>('http://localhost:3000/api/upload', formData)
-        .toPromise();
-      this.links = res?.result?.links ?? [];
-      console.log(this.links);
+          .post<{ result: { links: Link[] } }>('http://localhost:3000/api/upload', formData)
+          .toPromise();
+
+      const links = res?.result?.links ?? [];
+      this.linksChange.emit(links);
+
       this.uploadMessage = `${this.selectedFile.name} uploaded successfully!`;
     } catch (err) {
       console.error('Upload failed', err);

@@ -1,23 +1,17 @@
 <div class="upload-container">
-  <mat-card class="upload-card mat-elevation-z6">
-    <div class="button-container">
-      <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
-      <button mat-raised-button color="primary" (click)="fileInput.click()">
-        <mat-icon>upload</mat-icon> Upload File
-      </button>
-    </div>
+    <mat-card class="upload-card mat-elevation-z6">
+        <div class="button-container">
+            <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+            <button mat-raised-button color="primary" (click)="fileInput.click()">
+                <mat-icon>upload</mat-icon> Upload File
+            </button>
+        </div>
 
-    <div *ngIf="isLoading" class="spinner-container">
-      <mat-progress-spinner mode="indeterminate" diameter="40" color="primary"></mat-progress-spinner>
-      <p style="color:#006a6a;">Processing rota, please wait...</p>
-    </div>
+        <div *ngIf="isLoading" class="spinner-container">
+            <mat-progress-spinner mode="indeterminate" diameter="40" color="primary"></mat-progress-spinner>
+            <p style="color:#006a6a;">Processing rota, please wait...</p>
+        </div>
 
-    <p style="color:#006a6a;" *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
-  </mat-card>
-
-  <!-- <pre>{{ links | json }}</pre> -->
-  <!-- DisplayComponent shows employees -->
-
-    <app-display [links]="links"></app-display>
-
+        <p style="color:#006a6a;" *ngIf="!isLoading && uploadMessage" class="upload-msg">{{ uploadMessage }}</p>
+    </mat-card>
 </div>

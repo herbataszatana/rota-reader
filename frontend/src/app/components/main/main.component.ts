@@ -5,7 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+
 import { UploadComponent } from '../upload/upload.component';
+import { DisplayComponent, Link } from '../display/display.component';
 
 @Component({
   selector: 'app-main',
@@ -16,8 +18,15 @@ import { UploadComponent } from '../upload/upload.component';
     MatIconModule,
     MatCardModule,
     MatDividerModule,
-    UploadComponent
+    UploadComponent,
+    DisplayComponent
   ],
   templateUrl: './main.component.html'
 })
-export class MainComponent {}
+export class MainComponent {
+  links: Link[] = [];
+
+  handleLinksUpdate(newLinks: Link[]) {
+    this.links = newLinks;
+  }
+}
