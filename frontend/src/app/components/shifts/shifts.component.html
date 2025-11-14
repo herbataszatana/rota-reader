@@ -1,0 +1,40 @@
+<!-- src/app/components/shifts/shifts.component.html -->
+<mat-card class="mat-elevation-z4 section" *ngIf="shiftsResponse">
+    <div class="card-header-row">
+        <mat-card-title>Shifts for {{ employeeName }}</mat-card-title>
+        <button mat-raised-button color="primary" (click)="downloadAllShifts()" *ngIf="shifts.length > 0">
+            <mat-icon>download</mat-icon>
+            Download All Shifts
+        </button>
+    </div>
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+        <p *ngIf="shifts.length > 0">Total Shifts: {{ shifts.length }}</p>
+
+        <div *ngIf="shifts.length === 0">
+            <p>No shifts found for {{ employeeName }}</p>
+        </div>
+
+        <div *ngIf="shifts.length > 0" class="shifts-container">
+            <!-- Display shifts in a simple list format -->
+            <div *ngFor="let shift of shifts" class="shift-item">
+                <div class="shift-details">
+                    <p><strong>Date:</strong> {{ shift.date || 'N/A' }}</p>
+                    <p><strong>Time:</strong> {{ shift.startTime || shift.start || 'N/A' }} - {{ shift.endTime || shift.end || 'N/A' }}</p>
+                    <p *ngIf="shift.location"><strong>Location:</strong> {{ shift.location }}</p>
+                    <p *ngIf="shift.notes"><strong>Notes:</strong> {{ shift.notes }}</p>
+                </div>
+                <button mat-icon-button color="primary" (click)="downloadCalendar(shift)">
+                    <mat-icon>event</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Debug: Show raw response (remove this in production) -->
+        <details style="margin-top: 20px;">
+            <summary>Debug: Raw API Response</summary>
+            <pre>{{ shiftsResponse | json }}</pre>
+        </details>
+    </mat-card-content>
+</mat-card>

@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 
 import { UploadComponent } from '../upload/upload.component';
 import { DisplayComponent, Link } from '../display/display.component';
+import { ShiftsComponent } from '../shifts/shifts.component';
 
 @Component({
   selector: 'app-main',
@@ -19,14 +20,20 @@ import { DisplayComponent, Link } from '../display/display.component';
     MatCardModule,
     MatDividerModule,
     UploadComponent,
-    DisplayComponent
+    DisplayComponent,
+    ShiftsComponent
   ],
   templateUrl: './main.component.html'
 })
 export class MainComponent {
   links: Link[] = [];
+  shiftsResponse: any = null;
 
   handleLinksUpdate(newLinks: Link[]) {
     this.links = newLinks;
+  }
+
+  handleShiftsData(data: any) {
+    this.shiftsResponse = data;
   }
 }

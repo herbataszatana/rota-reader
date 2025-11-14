@@ -1,3 +1,4 @@
+<!-- src/app/components/main/main.component.html -->
 <mat-toolbar color="primary">
     <span>Rota Reader</span>
     <span class="spacer"></span>
@@ -13,8 +14,10 @@
         <mat-divider></mat-divider>
         <mat-card-content>
             <p>
-                The purpose of this application is to read the rota (xlsx format) and generate downloadable calendar events which
-                can be added to Google and iPhone calendars. To use it simply upload the rota file below and follow steps on screen.
+                The purpose of this application is to read the rota (xlsx format) and
+                generate downloadable calendar events which can be added to Google and
+                iPhone calendars. To use it simply upload the rota file below and follow
+                steps on screen.
             </p>
         </mat-card-content>
     </mat-card>
@@ -23,5 +26,11 @@
     <app-upload (linksChange)="handleLinksUpdate($event)"></app-upload>
 
     <!-- Display after upload -->
-    <app-display [links]="links"></app-display>
+    <app-display
+            [links]="links"
+            (shiftsData)="handleShiftsData($event)">
+    </app-display>
+
+    <!-- Shifts Display -->
+    <app-shifts [shiftsResponse]="shiftsResponse"></app-shifts>
 </div>

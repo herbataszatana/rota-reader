@@ -1,17 +1,18 @@
 // src/app/components/display/display.component.ts
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import {ReactiveFormsModule, FormControl, FormsModule} from '@angular/forms';
+import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
 import { startWith } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DateAdapter } from '@angular/material/core';
+
 export interface Employee {
   name: string;
   link: string;
@@ -19,9 +20,9 @@ export interface Employee {
 }
 
 export interface Link {
-  link: string
-  wk?: string
-  employees: Employee[]
+  link: string;
+  wk?: string;
+  employees: Employee[];
 }
 
 @Component({
@@ -44,6 +45,8 @@ export interface Link {
 })
 export class DisplayComponent {
   @Input() links: Link[] = [];
+  @Output() shiftsData = new EventEmitter<any>();
+
   filteredLinks: Link[] = [];
   employeeSearchCtrl = new FormControl('');
 
@@ -51,14 +54,18 @@ export class DisplayComponent {
   startDate: Date | null = null;
   endDate: Date | null = null;
   rosterWC: string | null = null;
+
   constructor(private http: HttpClient, private dateAdapter: DateAdapter<Date>) {}
+
   setUkLocale() {
     this.dateAdapter.setLocale('en-GB');
   }
+
   ngOnInit() {
-    this.setUkLocale()
+    this.setUkLocale();
     this.extractRosterWC();
   }
+
   ngOnChanges() {
     this.filteredLinks = [...this.links];
     this.setupSearchFilter();
@@ -99,7 +106,14 @@ export class DisplayComponent {
 
     this.http.post('http://localhost:3000/api/selectEmployee', payload)
         .subscribe({
-          next: res => console.log('✅ Selected employee sent', res),
+          next: (res: any) => {
+            console.log('✅ Selected employee sent', res);
+            // Emit the entire response with employee name
+            this.shiftsData.emit({
+              ...res,
+              employeeName: emp.name
+            });
+          },
           error: err => {
             console.error("❌ Error sending employee:", err);
             console.error("🧠 Server error body:", err.error);
@@ -119,8 +133,7 @@ export class DisplayComponent {
       // wk likely looks like YYYY-MM-DD already
       const date = new Date(this.links[0].wk);
       if (!isNaN(date.getTime())) {
-        this.rosterWC =
-            `${String(date.getDate()).padStart(2,'0')}/` +
+        this.rosterWC = `${String(date.getDate()).padStart(2,'0')}/` +
             `${String(date.getMonth() + 1).padStart(2,'0')}/` +
             `${date.getFullYear()}`;
       }
