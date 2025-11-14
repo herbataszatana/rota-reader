@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DownloadDialogComponent, DialogData, DialogResult } from '../download-dialog/download-dialog.component';
 
 interface MonthData {
   monthName: string;
@@ -25,7 +27,8 @@ interface MonthData {
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    MatChipsModule
+    MatChipsModule,
+    MatDialogModule
   ],
   templateUrl: './shifts.component.html',
   styleUrls: ['./shifts.component.scss']
@@ -35,6 +38,8 @@ export class ShiftsComponent implements OnChanges {
 
   monthsData: MonthData[] = [];
   currentMonthIndex: number = 0;
+
+  constructor(private dialog: MatDialog) {}
 
   ngOnChanges() {
     if (this.shiftsResponse) {
@@ -132,17 +137,64 @@ export class ShiftsComponent implements OnChanges {
 
   downloadCalendar(shift: any) {
     console.log('Downloading calendar event for:', shift);
-    // TODO: Implement .ics file generation and download
+    // TODO: Implement .ics file generation and download for single shift
   }
 
   downloadAllShifts() {
-    console.log('Downloading all shifts for:', this.employeeName);
-    // TODO: Implement .ics file generation for all shifts
+    const allShifts = this.monthsData.flatMap(month => month.shifts);
+    const workingShifts = allShifts.filter(s => !s.isRestDay);
+    const restDays = allShifts.filter(s => s.isRestDay);
+
+    const dialogData: DialogData = {
+      type: 'all',
+      totalShifts: allShifts.length,
+      workingShifts: workingShifts.length,
+      restDays: restDays.length
+    };
+
+    const dialogRef = this.dialog.open(DownloadDialogComponent, {
+      width: '500px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe((result: DialogResult) => {
+      if (result?.confirmed) {
+        console.log('Downloading all shifts, include rest days:', result.includeRestDays);
+        // TODO: Implement .ics file generation for all shifts
+        const shiftsToDownload = result.includeRestDays ? allShifts : workingShifts;
+        console.log('Shifts to download:', shiftsToDownload);
+      }
+    });
   }
 
   downloadMonthShifts() {
-    console.log('Downloading shifts for current month:', this.currentMonth);
-    // TODO: Implement .ics file generation for current month
+    if (!this.currentMonth) return;
+
+    const workingShifts = this.currentMonth.shifts.filter(s => !s.isRestDay);
+    const restDays = this.currentMonth.shifts.filter(s => s.isRestDay);
+
+    const dialogData: DialogData = {
+      type: 'month',
+      monthName: this.currentMonth.monthName,
+      year: this.currentMonth.year,
+      totalShifts: this.currentMonth.shifts.length,
+      workingShifts: workingShifts.length,
+      restDays: restDays.length
+    };
+
+    const dialogRef = this.dialog.open(DownloadDialogComponent, {
+      width: '500px',
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe((result: DialogResult) => {
+      if (result?.confirmed) {
+        console.log(`Downloading ${this.currentMonth?.monthName} shifts, include rest days:`, result.includeRestDays);
+        // TODO: Implement .ics file generation for month shifts
+        const shiftsToDownload = result.includeRestDays ? this.currentMonth!.shifts : workingShifts;
+        console.log('Shifts to download:', shiftsToDownload);
+      }
+    });
   }
 
   formatTime(time: string | null): string {
