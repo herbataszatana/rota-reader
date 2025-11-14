@@ -1,8 +1,8 @@
 <!-- src/app/components/shifts/shifts.component.html -->
 <mat-card class="mat-elevation-z4 section" *ngIf="shiftsResponse">
     <div class="card-header-row">
-        <mat-card-title>Shifts for {{ employeeName }}</mat-card-title>
-        <button mat-raised-button color="primary" (click)="downloadAllShifts()" *ngIf="shifts.length > 0">
+        <mat-card-title>Shifts Calendar for {{ employeeName }}</mat-card-title>
+        <button mat-raised-button color="primary" (click)="downloadAllShifts()" *ngIf="hasShifts">
             <mat-icon>download</mat-icon>
             Download All Shifts
         </button>
@@ -10,31 +10,109 @@
     <mat-divider></mat-divider>
 
     <mat-card-content>
-        <p *ngIf="shifts.length > 0">Total Shifts: {{ shifts.length }}</p>
-
-        <div *ngIf="shifts.length === 0">
+        <div *ngIf="!hasShifts" class="no-shifts">
             <p>No shifts found for {{ employeeName }}</p>
         </div>
 
-        <div *ngIf="shifts.length > 0" class="shifts-container">
-            <!-- Display shifts in a simple list format -->
-            <div *ngFor="let shift of shifts" class="shift-item">
-                <div class="shift-details">
-                    <p><strong>Date:</strong> {{ shift.date || 'N/A' }}</p>
-                    <p><strong>Time:</strong> {{ shift.startTime || shift.start || 'N/A' }} - {{ shift.endTime || shift.end || 'N/A' }}</p>
-                    <p *ngIf="shift.location"><strong>Location:</strong> {{ shift.location }}</p>
-                    <p *ngIf="shift.notes"><strong>Notes:</strong> {{ shift.notes }}</p>
+        <!-- Monthly Navigation -->
+        <div *ngIf="hasShifts && currentMonth" class="month-navigation">
+            <button
+                    mat-icon-button
+                    (click)="previousMonth()"
+                    [disabled]="!canGoPrevious"
+                    class="nav-button">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="month-info">
+                <h2>{{ currentMonth.monthName }} {{ currentMonth.year }}</h2>
+                <div class="month-stats">
+                    <mat-chip class="stats-chip">
+                        <mat-icon>calendar_month</mat-icon>
+                        Month {{ currentMonthIndex + 1 }} of {{ monthsData.length }}
+                    </mat-chip>
                 </div>
-                <button mat-icon-button color="primary" (click)="downloadCalendar(shift)">
-                    <mat-icon>event</mat-icon>
-                </button>
+            </div>
+
+            <button
+                    mat-icon-button
+                    (click)="nextMonth()"
+                    [disabled]="!canGoNext"
+                    class="nav-button">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+
+        <!-- Download Month Button -->
+        <div *ngIf="hasShifts && currentMonth" class="month-actions">
+            <button mat-stroked-button color="primary" (click)="downloadMonthShifts()">
+                <mat-icon>file_download</mat-icon>
+                Download {{ currentMonth.monthName }} Shifts
+            </button>
+        </div>
+
+        <!-- Monthly Calendar View -->
+        <div *ngIf="hasShifts && currentMonth" class="calendar-container">
+            <div class="shifts-grid">
+                <div
+                        *ngFor="let shift of currentMonth.shifts"
+                        class="shift-card"
+                        [class.rest-day]="shift.isRestDay"
+                        [class.working-day]="!shift.isRestDay">
+
+                    <div class="shift-header">
+                        <div class="day-info">
+                            <span class="day-name">{{ shift.day }}</span>
+                            <span class="shift-date">{{ formatDateFull(shift.date) }}</span>
+                        </div>
+                        <button
+                                *ngIf="!shift.isRestDay"
+                                mat-icon-button
+                                color="primary"
+                                (click)="downloadCalendar(shift)"
+                                class="download-btn"
+                                matTooltip="Download to calendar">
+                            <mat-icon>event</mat-icon>
+                        </button>
+                    </div>
+
+                    <mat-divider></mat-divider>
+
+                    <div *ngIf="shift.isRestDay" class="rest-day-content">
+                        <mat-icon>beach_access</mat-icon>
+                        <span>Rest Day</span>
+                    </div>
+
+                    <div *ngIf="!shift.isRestDay" class="shift-content">
+                        <div class="time-block">
+                            <mat-icon class="time-icon">schedule</mat-icon>
+                            <div class="times">
+                                <span class="time">{{ formatTime(shift.startTime) }}</span>
+                                <span class="separator">→</span>
+                                <span class="time">{{ formatTime(shift.endTime) }}</span>
+                            </div>
+                            <mat-chip *ngIf="shift.endsNextDay" class="next-day-chip" color="accent">
+                                +1
+                            </mat-chip>
+                        </div>
+
+                        <div class="shift-details-grid">
+                            <div class="detail-item" *ngIf="shift.reference">
+                                <mat-icon>badge</mat-icon>
+                                <span>Ref: <strong>{{ shift.reference }}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Debug: Show raw response (remove this in production) -->
-        <details style="margin-top: 20px;">
-            <summary>Debug: Raw API Response</summary>
-            <pre>{{ shiftsResponse | json }}</pre>
+        <!-- Debug Section -->
+        <details style="margin-top: 20px;" *ngIf="shiftsResponse">
+            <summary style="cursor: pointer; color: #006a6a; font-weight: 500;">
+                Debug: Raw API Response
+            </summary>
+            <pre style="background: #f5f5f5; padding: 16px; border-radius: 4px; overflow-x: auto; font-size: 0.85rem;">{{ shiftsResponse | json }}</pre>
         </details>
     </mat-card-content>
 </mat-card>
