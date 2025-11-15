@@ -8,6 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DownloadDialogComponent, DialogData, DialogResult } from '../download-dialog/download-dialog.component';
 
@@ -30,6 +33,9 @@ interface MonthData {
     MatTableModule,
     MatChipsModule,
     MatDialogModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
     HttpClientModule
   ],
   templateUrl: './shifts.component.html',
@@ -40,10 +46,12 @@ export class ShiftsComponent implements OnChanges {
 
   monthsData: MonthData[] = [];
   currentMonthIndex: number = 0;
+  isDownloading: boolean = false;
 
   constructor(
       private dialog: MatDialog,
-      private http: HttpClient
+      private http: HttpClient,
+      private snackBar: MatSnackBar
   ) {}
 
   ngOnChanges() {
@@ -173,11 +181,13 @@ export class ShiftsComponent implements OnChanges {
     dialogRef.afterClosed().subscribe((result: DialogResult) => {
       if (result?.confirmed) {
         console.log('Downloading all shifts, include rest days:', result.includeRestDays);
+        console.log('Event settings:', result.eventSettings);
 
         const payload = {
           employeeData: this.shiftsResponse.selectedEmployee,
           includeRestDays: result.includeRestDays,
-          type: 'all'
+          type: 'all',
+          eventSettings: result.eventSettings
         };
 
         this.downloadICS(payload);
@@ -208,6 +218,7 @@ export class ShiftsComponent implements OnChanges {
     dialogRef.afterClosed().subscribe((result: DialogResult) => {
       if (result?.confirmed) {
         console.log(`Downloading ${this.currentMonth?.monthName} shifts, include rest days:`, result.includeRestDays);
+        console.log('Event settings:', result.eventSettings);
 
         const monthDate = new Date(`${this.currentMonth!.monthName} 1, ${this.currentMonth!.year}`);
 
@@ -215,6 +226,7 @@ export class ShiftsComponent implements OnChanges {
           employeeData: this.shiftsResponse.selectedEmployee,
           includeRestDays: result.includeRestDays,
           type: 'month',
+          eventSettings: result.eventSettings,
           monthFilter: {
             month: monthDate.getMonth(),
             year: this.currentMonth!.year
@@ -229,6 +241,8 @@ export class ShiftsComponent implements OnChanges {
   private downloadICS(payload: any, customFilename?: string) {
     console.log('📤 Sending download request:', payload);
 
+    this.isDownloading = true;
+
     this.http.post('http://localhost:3000/api/downloadShifts', payload, {
       responseType: 'blob',
       observe: 'response'
@@ -238,6 +252,7 @@ export class ShiftsComponent implements OnChanges {
         const blob = response.body;
         if (!blob) {
           console.error('❌ No blob in response');
+          this.isDownloading = false;
           return;
         }
 
@@ -251,7 +266,7 @@ export class ShiftsComponent implements OnChanges {
           }
         }
 
-        // Create download link
+        // Create download link and trigger download
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -262,11 +277,35 @@ export class ShiftsComponent implements OnChanges {
         window.URL.revokeObjectURL(url);
 
         console.log('✅ ICS file downloaded:', filename);
+
+        this.isDownloading = false;
+
+        // Show success message
+        this.snackBar.open(
+            '✅ ICS file generated successfully! Check your downloads and open the ICS on your phone. If using iPhone, forward the file using a program other than WhatsApp.',
+            'Close',
+            {
+              duration: 8000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+              panelClass: ['success-snackbar']
+            }
+        );
       },
       error: (err) => {
         console.error('❌ Error downloading ICS:', err);
         console.error('Error details:', err.error);
-        alert('Failed to download calendar file. Please check console for details.');
+        this.isDownloading = false;
+        this.snackBar.open(
+            '❌ Failed to download calendar file. Please check console for details.',
+            'Close',
+            {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'bottom',
+              panelClass: ['error-snackbar']
+            }
+        );
       }
     });
   }

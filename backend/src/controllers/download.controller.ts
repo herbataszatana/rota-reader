@@ -1,7 +1,7 @@
 // src/controllers/download.controller.ts
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { getEmployeeShiftData } from "../services/employee.service.js";
-import { generateICS, shiftsToICSEvents } from "../services/ics.service.js";
+import { generateICS, shiftsToICSEvents, EventSettings } from "../services/ics.service.js";
 import { getUploadedFilePath } from "../state/upload.state.js";
 import type { EmployeeSelection } from "../types/employee.types.js";
 
@@ -9,6 +9,7 @@ interface DownloadRequest {
     employeeData: EmployeeSelection;
     includeRestDays: boolean;
     type: 'all' | 'month' | 'single';
+    eventSettings: EventSettings;
     monthFilter?: {
         month: number; // 0-11
         year: number;
@@ -19,7 +20,7 @@ export async function handleDownloadShifts(
     request: FastifyRequest<{ Body: DownloadRequest }>,
     reply: FastifyReply
 ) {
-    const { employeeData, includeRestDays, type, monthFilter } = request.body;
+    const { employeeData, includeRestDays, type, monthFilter, eventSettings } = request.body;
 
     const filePath = getUploadedFilePath();
     if (!filePath) {
@@ -42,8 +43,17 @@ export async function handleDownloadShifts(
             });
         }
 
-        // Convert shifts to ICS events
-        const events = shiftsToICSEvents(allShifts, includeRestDays);
+        // Use default settings if not provided
+        const settings: EventSettings = eventSettings || {
+            shiftReminderMinutes: 60,
+            restDayReminder: false,
+            restDayReminderMinutes: 540,
+            eventNameFormat: 'reference',
+            customPrefix: ''
+        };
+
+        // Convert shifts to ICS events with custom settings
+        const events = shiftsToICSEvents(allShifts, includeRestDays, settings);
 
         // Generate ICS file content
         const icsContent = generateICS(events, employeeData.name);

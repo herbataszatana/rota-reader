@@ -191,3 +191,39 @@ app-display mat-card {
 .date-range-row mat-form-field {
   width: 200px; /* ✅ fixed clean size */
 }
+/* Snackbar Styles */
+.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.success-snackbar .mat-simple-snack-bar-content {
+  color: white !important;
+  font-weight: 500;
+}
+
+.success-snackbar .mat-button {
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.error-snackbar .mat-simple-snack-bar-content {
+  color: white !important;
+  font-weight: 500;
+}
+
+.error-snackbar .mat-button {
+  color: white !important;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}

@@ -1,5 +1,13 @@
 /* src/app/components/shifts/shifts.component.css */
 
+.download-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
 .card-header-row {
   display: flex;
   justify-content: space-between;
@@ -7,6 +15,7 @@
   padding: 16px;
   flex-wrap: wrap;
   gap: 16px;
+  position: relative;
 }
 
 mat-card-content {

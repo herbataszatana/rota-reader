@@ -1,10 +1,24 @@
 <!-- src/app/components/shifts/shifts.component.html -->
 <mat-card class="mat-elevation-z4 section" *ngIf="shiftsResponse">
+
+    <!-- Download Progress Bar -->
+    <mat-progress-bar
+            *ngIf="isDownloading"
+            mode="indeterminate"
+            color="primary"
+            class="download-progress">
+    </mat-progress-bar>
+
     <div class="card-header-row">
         <mat-card-title>Shifts Calendar for {{ employeeName }}</mat-card-title>
-        <button mat-raised-button color="primary" (click)="downloadAllShifts()" *ngIf="hasShifts">
+        <button
+                mat-raised-button
+                color="primary"
+                (click)="downloadAllShifts()"
+                *ngIf="hasShifts"
+                [disabled]="isDownloading">
             <mat-icon>download</mat-icon>
-            Download All Shifts
+            {{ isDownloading ? 'Generating...' : 'Download All Shifts' }}
         </button>
     </div>
     <mat-divider></mat-divider>
@@ -106,5 +120,13 @@
                 </div>
             </div>
         </div>
+
+        <!-- Debug Section -->
+        <details style="margin-top: 20px;" *ngIf="shiftsResponse">
+            <summary style="cursor: pointer; color: #006a6a; font-weight: 500;">
+                Debug: Raw API Response
+            </summary>
+            <pre style="background: #f5f5f5; padding: 16px; border-radius: 4px; overflow-x: auto; font-size: 0.85rem;">{{ shiftsResponse | json }}</pre>
+        </details>
     </mat-card-content>
 </mat-card>

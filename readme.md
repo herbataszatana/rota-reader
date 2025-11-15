@@ -20,16 +20,16 @@
 
 
 TO DO :
-- [ ] add download option (backend and frontend)
+- [x] add download option (backend and frontend)
 - [ ] datepicker warning
   - [ ] if the end date is before start date and if start date is after end date
   - [ ] if no end date then generate 27 weeks from the start date
   - [ ] if no start date then generate from wc date 
   - [ ] if selected period before wc date - warn there is no rota before 
   - [ ] if selected period is a year after wc date then warning that only done 52 weeks (max)
-- [ ] loading bard when fetching data etc
+- [x] loading bard when fetching data etc
 - [ ] move automatically when new component appears
-- [x ] filter out 'vacancy' from employees list
+- [x] filter out 'vacancy' from employees list
 - [ ] add redo at the end 
-- [ ] add success alert when generated download
+- [x] add success alert when generated download
 - [ ] create script to download all dependencies on initial run and then start both server and angular and open browser 

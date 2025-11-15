@@ -8,6 +8,15 @@ interface ICSEvent {
     end: Date;
     isAllDay?: boolean;
     alarm?: number; // minutes before
+    category?: string;
+}
+
+export interface EventSettings {
+    shiftReminderMinutes: number;
+    restDayReminder: boolean;
+    restDayReminderMinutes: number;
+    eventNameFormat: 'reference' | 'custom' | 'detailed' | 'times' | 'timesWithRef';
+    customPrefix?: string;
 }
 
 export function generateICS(events: ICSEvent[], employeeName: string): string {
@@ -42,8 +51,13 @@ export function generateICS(events: ICSEvent[], employeeName: string): string {
             lines.push(`DESCRIPTION:${escapeText(event.description)}`);
         }
 
-        // Add alarm/reminder (only for non-all-day events)
-        if (event.alarm && !event.isAllDay) {
+        // Add category based on job reference
+        if (event.category) {
+            lines.push(`CATEGORIES:${escapeText(event.category)}`);
+        }
+
+        // Add alarm/reminder (only for non-all-day events or if explicitly set)
+        if (event.alarm && event.alarm > 0) {
             lines.push('BEGIN:VALARM');
             lines.push('ACTION:DISPLAY');
             lines.push(`DESCRIPTION:${escapeText(event.summary)}`);
@@ -58,7 +72,7 @@ export function generateICS(events: ICSEvent[], employeeName: string): string {
     return lines.join('\r\n');
 }
 
-export function shiftsToICSEvents(shifts: Shift[], includeRestDays: boolean): ICSEvent[] {
+export function shiftsToICSEvents(shifts: Shift[], includeRestDays: boolean, settings: EventSettings): ICSEvent[] {
     const events: ICSEvent[] = [];
 
     shifts.forEach(shift => {
@@ -69,26 +83,33 @@ export function shiftsToICSEvents(shifts: Shift[], includeRestDays: boolean): IC
                 const end = new Date(shift.date);
                 end.setDate(end.getDate() + 1); // All-day events need end date as next day
 
+                const summary = formatEventName('Rest Day (RD)', null, shift.startTime, shift.endTime, settings);
+
                 events.push({
-                    summary: 'Rest Day (RD)',
+                    summary,
                     description: 'Rest Day',
                     start,
                     end,
-                    isAllDay: true
-                    // No alarm for rest days
+                    isAllDay: true,
+                    category: 'REST_DAY',
+                    alarm: settings.restDayReminder ? settings.restDayReminderMinutes : undefined
                 });
             }
         } else {
             // Working shift
             if (!shift.startDateTime || !shift.endDateTime) return;
 
+            const category = determineCategory(shift.reference);
+            const summary = formatEventName(shift.reference || 'Shift', shift.reference, shift.startTime, shift.endTime, settings);
+
             events.push({
-                summary: shift.reference || 'Shift',
+                summary,
                 description: `${shift.reference || 'Shift'} - ${shift.startTime} to ${shift.endTime}`,
                 start: new Date(shift.startDateTime),
                 end: new Date(shift.endDateTime),
                 isAllDay: false,
-                alarm: 60 // 1 hour before
+                alarm: settings.shiftReminderMinutes > 0 ? settings.shiftReminderMinutes : undefined,
+                category: category
             });
         }
     });
@@ -96,8 +117,63 @@ export function shiftsToICSEvents(shifts: Shift[], includeRestDays: boolean): IC
     return events;
 }
 
+function formatEventName(
+    defaultName: string,
+    reference: string | null,
+    startTime: string | null,
+    endTime: string | null,
+    settings: EventSettings
+): string {
+    const ref = reference || defaultName;
+
+    // Rest days are never affected by custom prefix
+    if (defaultName === 'Rest Day (RD)') {
+        return defaultName;
+    }
+
+    switch (settings.eventNameFormat) {
+        case 'reference':
+            return ref;
+        case 'times':
+            if (startTime && endTime) {
+                return `${startTime}-${endTime}`;
+            }
+            return ref;
+        case 'timesWithRef':
+            if (startTime && endTime) {
+                return `${startTime}-${endTime} (${ref})`;
+            }
+            return ref;
+        case 'detailed':
+            if (startTime && endTime) {
+                return `Shift ${ref} (${startTime}-${endTime})`;
+            }
+            return ref;
+        case 'custom':
+            // Custom prefix only applies to shifts, not rest days
+            return `${settings.customPrefix || ''}${ref}`;
+        default:
+            return ref;
+    }
+}
+
+function determineCategory(reference: string | null): string {
+    if (!reference) return 'SHIFT';
+
+    // Group common job reference patterns
+    const ref = reference.toUpperCase();
+
+    if (ref.includes('A/R') || ref.startsWith('AR')) return 'AR_SHIFT';
+    if (ref.match(/^\d{4}$/)) return `REF_${ref}`; // 4-digit refs like 1601
+    if (ref.includes('TRAIN')) return 'TRAINING';
+    if (ref.includes('MEET')) return 'MEETING';
+
+    // Default: use the reference itself as category
+    return ref.replace(/[^A-Z0-9_]/g, '_');
+}
+
 function formatDateTime(date: Date): string {
-    // Format: YYYYMMDDTHHmmssZ (UTC)
+    // Format: YYYYMMDDTHHmmss (local time)
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');

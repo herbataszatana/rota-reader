@@ -6,6 +6,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
 import { startWith } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -35,6 +36,7 @@ export interface Link {
     MatButtonModule,
     MatInputModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
     HttpClientModule,
     MatDatepickerModule,
@@ -54,6 +56,7 @@ export class DisplayComponent {
   startDate: Date | null = null;
   endDate: Date | null = null;
   rosterWC: string | null = null;
+  isLoadingShifts: boolean = false;
 
   constructor(private http: HttpClient, private dateAdapter: DateAdapter<Date>) {}
 
@@ -95,7 +98,6 @@ export class DisplayComponent {
   }
 
   selectEmployee(emp: Employee, link: Link) {
-    // Payload includes optional date range
     const payload = {
       name: emp.name,
       link: link.link,
@@ -104,11 +106,13 @@ export class DisplayComponent {
       endDate: this.endDate ? this.formatDate(this.endDate) : null
     };
 
+    this.isLoadingShifts = true;
+
     this.http.post('http://localhost:3000/api/selectEmployee', payload)
         .subscribe({
           next: (res: any) => {
             console.log('✅ Selected employee sent', res);
-            // Emit the entire response with employee name
+            this.isLoadingShifts = false;
             this.shiftsData.emit({
               ...res,
               employeeName: emp.name
@@ -117,6 +121,7 @@ export class DisplayComponent {
           error: err => {
             console.error("❌ Error sending employee:", err);
             console.error("🧠 Server error body:", err.error);
+            this.isLoadingShifts = false;
           }
         });
   }
@@ -130,7 +135,6 @@ export class DisplayComponent {
 
   extractRosterWC() {
     if (this.links.length > 0 && this.links[0].wk) {
-      // wk likely looks like YYYY-MM-DD already
       const date = new Date(this.links[0].wk);
       if (!isNaN(date.getTime())) {
         this.rosterWC = `${String(date.getDate()).padStart(2,'0')}/` +
