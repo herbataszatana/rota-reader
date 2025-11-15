@@ -155,10 +155,17 @@ export class ShiftsComponent implements OnChanges {
       employeeData: this.shiftsResponse.selectedEmployee,
       includeRestDays: shift.isRestDay,
       type: 'single',
-      singleShift: shift
+      singleShift: shift,
+      eventSettings: {
+        shiftReminderMinutes: 60,
+        restDayReminder: false,
+        restDayReminderMinutes: 540,
+        eventNameFormat: 'reference',
+        customPrefix: ''
+      }
     };
 
-    this.downloadICS(payload, `${shift.reference || 'shift'}_${shift.date}.ics`);
+    this.downloadICS(payload);
   }
 
   downloadAllShifts() {

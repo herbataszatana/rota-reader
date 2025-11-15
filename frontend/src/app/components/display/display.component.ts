@@ -43,7 +43,8 @@ export interface Link {
     MatNativeDateModule,
     FormsModule
   ],
-  templateUrl: './display.component.html'
+  templateUrl: './display.component.html',
+  styleUrls: ['./display.component.scss']
 })
 export class DisplayComponent {
   @Input() links: Link[] = [];

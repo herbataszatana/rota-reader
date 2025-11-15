@@ -10,6 +10,7 @@ interface DownloadRequest {
     includeRestDays: boolean;
     type: 'all' | 'month' | 'single';
     eventSettings: EventSettings;
+    singleShift?: any; // For single shift download
     monthFilter?: {
         month: number; // 0-11
         year: number;
@@ -20,7 +21,7 @@ export async function handleDownloadShifts(
     request: FastifyRequest<{ Body: DownloadRequest }>,
     reply: FastifyReply
 ) {
-    const { employeeData, includeRestDays, type, monthFilter, eventSettings } = request.body;
+    const { employeeData, includeRestDays, type, monthFilter, eventSettings, singleShift } = request.body;
 
     const filePath = getUploadedFilePath();
     if (!filePath) {
@@ -28,19 +29,26 @@ export async function handleDownloadShifts(
     }
 
     try {
-        // Get all shift data
-        const result = await getEmployeeShiftData(filePath, employeeData);
+        let allShifts;
 
-        // Flatten all shifts from all weeks
-        let allShifts = result.weeksData.flatMap(week => week.shifts);
+        // Handle single shift download
+        if (type === 'single' && singleShift) {
+            allShifts = [singleShift];
+        } else {
+            // Get all shift data for 'all' or 'month'
+            const result = await getEmployeeShiftData(filePath, employeeData);
 
-        // Filter by month if requested
-        if (type === 'month' && monthFilter) {
-            allShifts = allShifts.filter(shift => {
-                const shiftDate = new Date(shift.date);
-                return shiftDate.getMonth() === monthFilter.month &&
-                    shiftDate.getFullYear() === monthFilter.year;
-            });
+            // Flatten all shifts from all weeks
+            allShifts = result.weeksData.flatMap(week => week.shifts);
+
+            // Filter by month if requested
+            if (type === 'month' && monthFilter) {
+                allShifts = allShifts.filter(shift => {
+                    const shiftDate = new Date(shift.date);
+                    return shiftDate.getMonth() === monthFilter.month &&
+                        shiftDate.getFullYear() === monthFilter.year;
+                });
+            }
         }
 
         // Use default settings if not provided
@@ -62,7 +70,9 @@ export async function handleDownloadShifts(
         const safeEmployeeName = employeeData.name.replace(/[^a-z0-9]/gi, '_');
         let filename = `${safeEmployeeName}_shifts`;
 
-        if (type === 'month' && monthFilter) {
+        if (type === 'single' && singleShift) {
+            filename = `${safeEmployeeName}_${singleShift.reference || 'shift'}_${singleShift.date}`;
+        } else if (type === 'month' && monthFilter) {
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             filename += `_${monthNames[monthFilter.month]}_${monthFilter.year}`;
