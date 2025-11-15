@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DownloadDialogComponent, DialogData, DialogResult } from '../download-dialog/download-dialog.component';
 
 interface MonthData {
@@ -28,7 +29,8 @@ interface MonthData {
     MatIconModule,
     MatTableModule,
     MatChipsModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule
   ],
   templateUrl: './shifts.component.html',
   styleUrls: ['./shifts.component.scss']
@@ -39,7 +41,10 @@ export class ShiftsComponent implements OnChanges {
   monthsData: MonthData[] = [];
   currentMonthIndex: number = 0;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+      private dialog: MatDialog,
+      private http: HttpClient
+  ) {}
 
   ngOnChanges() {
     if (this.shiftsResponse) {
@@ -136,8 +141,16 @@ export class ShiftsComponent implements OnChanges {
   }
 
   downloadCalendar(shift: any) {
-    console.log('Downloading calendar event for:', shift);
-    // TODO: Implement .ics file generation and download for single shift
+    console.log('Downloading single shift:', shift);
+
+    const payload = {
+      employeeData: this.shiftsResponse.selectedEmployee,
+      includeRestDays: shift.isRestDay,
+      type: 'single',
+      singleShift: shift
+    };
+
+    this.downloadICS(payload, `${shift.reference || 'shift'}_${shift.date}.ics`);
   }
 
   downloadAllShifts() {
@@ -160,9 +173,14 @@ export class ShiftsComponent implements OnChanges {
     dialogRef.afterClosed().subscribe((result: DialogResult) => {
       if (result?.confirmed) {
         console.log('Downloading all shifts, include rest days:', result.includeRestDays);
-        // TODO: Implement .ics file generation for all shifts
-        const shiftsToDownload = result.includeRestDays ? allShifts : workingShifts;
-        console.log('Shifts to download:', shiftsToDownload);
+
+        const payload = {
+          employeeData: this.shiftsResponse.selectedEmployee,
+          includeRestDays: result.includeRestDays,
+          type: 'all'
+        };
+
+        this.downloadICS(payload);
       }
     });
   }
@@ -190,9 +208,65 @@ export class ShiftsComponent implements OnChanges {
     dialogRef.afterClosed().subscribe((result: DialogResult) => {
       if (result?.confirmed) {
         console.log(`Downloading ${this.currentMonth?.monthName} shifts, include rest days:`, result.includeRestDays);
-        // TODO: Implement .ics file generation for month shifts
-        const shiftsToDownload = result.includeRestDays ? this.currentMonth!.shifts : workingShifts;
-        console.log('Shifts to download:', shiftsToDownload);
+
+        const monthDate = new Date(`${this.currentMonth!.monthName} 1, ${this.currentMonth!.year}`);
+
+        const payload = {
+          employeeData: this.shiftsResponse.selectedEmployee,
+          includeRestDays: result.includeRestDays,
+          type: 'month',
+          monthFilter: {
+            month: monthDate.getMonth(),
+            year: this.currentMonth!.year
+          }
+        };
+
+        this.downloadICS(payload);
+      }
+    });
+  }
+
+  private downloadICS(payload: any, customFilename?: string) {
+    console.log('📤 Sending download request:', payload);
+
+    this.http.post('http://localhost:3000/api/downloadShifts', payload, {
+      responseType: 'blob',
+      observe: 'response'
+    }).subscribe({
+      next: (response) => {
+        console.log('✅ Received response:', response);
+        const blob = response.body;
+        if (!blob) {
+          console.error('❌ No blob in response');
+          return;
+        }
+
+        // Get filename from Content-Disposition header or use custom/default
+        let filename = customFilename || 'shifts.ics';
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+          const matches = /filename="?([^"]+)"?/.exec(contentDisposition);
+          if (matches && matches[1]) {
+            filename = matches[1];
+          }
+        }
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        console.log('✅ ICS file downloaded:', filename);
+      },
+      error: (err) => {
+        console.error('❌ Error downloading ICS:', err);
+        console.error('Error details:', err.error);
+        alert('Failed to download calendar file. Please check console for details.');
       }
     });
   }
