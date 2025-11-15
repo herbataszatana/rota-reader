@@ -29,10 +29,18 @@ export async function getEmployeeShiftData(filePath: string, body: EmployeeSelec
     }
 
     const rosterSheet = workbook.getWorksheet("Roster");
-    const rosterStartDateRaw = rosterSheet ? extractFirstWeekCommencing(rosterSheet) : null;
-    if (!rosterStartDateRaw) throw new Error("Could not find first week commencing date");
+    if (!rosterSheet) {
+        throw new Error("Roster sheet not found in workbook");
+    }
+
+    const rosterStartDateRaw = extractFirstWeekCommencing(rosterSheet);
+    if (!rosterStartDateRaw) {
+        throw new Error("Could not find first week commencing date in Roster sheet");
+    }
 
     const rosterStartDate = new Date(rosterStartDateRaw);
+    console.log("✅ Roster start date:", formatDate(rosterStartDate));
+
     const weekRows: { row: ExcelJS.Row; weekNumber: number }[] = [];
 
     for (let i = 1; i <= sheet.rowCount; i++) {
