@@ -19,32 +19,48 @@ export function checkIfEndsNextDay(startTime: string | null, endTime: string | n
 }
 
 export function extractFirstWeekCommencing(rosterSheet: ExcelJS.Worksheet): Date | null {
-    const row = rosterSheet.getRow(2);
-    const cell = row.getCell(1);
+    const row = rosterSheet.getRow(4);
+    const cell = row.getCell('AA'); // Column AA (you can also use getCell(27) as AA is the 27th column)
     let text = '';
 
     if (!cell || cell.value === null) return null;
 
+    // Handle different cell value types
     if (typeof cell.value === 'string') {
         text = cell.value.trim();
+    } else if (cell.value instanceof Date) {
+        // If it's already a Date object, return it directly
+        return cell.value;
+    } else if (typeof cell.value === 'number') {
+        // Excel stores dates as serial numbers - ExcelJS converts them automatically
+        // This handles the case where it might be a numeric serial date
+        const excelEpoch = new Date(1899, 11, 30); // Excel epoch
+        const daysOffset = cell.value as number;
+        const date = new Date(excelEpoch.getTime() + daysOffset * 24 * 60 * 60 * 1000);
+        return date;
     } else if (typeof cell.value === 'object') {
         if ('richText' in cell.value) {
             text = cell.value.richText.map(r => r.text).join('').trim();
         } else if ('text' in cell.value) {
             text = (cell.value.text as string).trim();
+        } else if ('result' in cell.value) {
+            text = String(cell.value.result).trim();
         } else {
             return null;
         }
     }
 
-    // Look for pattern like "W/C 15/11/2024" or "WC 15/11/2024"
-    const match = text.match(/w\/?c\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
-    if (!match) return null;
+    // If we got a text string, try to parse it as dd/mm/yyyy format
+    if (text) {
+        const match = text.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+        if (!match) return null;
 
-    const [day, month, year] = match[1].split('/').map(Number);
-    return new Date(year, month - 1, day); // Sunday = start of rota
+        const [, day, month, year] = match;
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+
+    return null;
 }
-
 export function formatDate(date: Date): string {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, '0');

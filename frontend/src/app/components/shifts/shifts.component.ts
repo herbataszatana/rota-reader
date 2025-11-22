@@ -289,7 +289,7 @@ export class ShiftsComponent implements OnChanges {
 
         // Show success message
         this.snackBar.open(
-            '✅ ICS file generated successfully! Check your downloads and open the ICS on your phone. If using iPhone, forward the file using a program other than WhatsApp.',
+            '✅ ICS file generated successfully! Check your downloads and open the ICS on your phone. When forwarding the file to phone please use a program other than WhatsApp.',
             'Close',
             {
               duration: 8000,

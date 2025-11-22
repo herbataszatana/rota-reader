@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Link } from '../display/display.component';
 
 @Component({
@@ -22,7 +22,8 @@ import { Link } from '../display/display.component';
     MatIconModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule,
   ],
   templateUrl: './upload.component.html'
 })
@@ -33,7 +34,7 @@ export class UploadComponent {
   uploadMessage = '';
   isLoading = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,  private snackBar: MatSnackBar) {}
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -61,6 +62,17 @@ export class UploadComponent {
 
       this.uploadMessage = `${this.selectedFile.name} uploaded successfully!`;
     } catch (err) {
+
+      this.snackBar.open(
+          'Something went wrong, please check uploaded file. If problem persist check server console',
+          'Close',
+          {
+            duration: 8000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['success-snackbar']
+          }
+      );
       console.error('Upload failed', err);
       this.uploadMessage = 'Upload failed. See console for details.';
     } finally {
