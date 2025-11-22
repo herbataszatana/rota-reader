@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # =============================================================================
-# ROTA READER - MAC/LINUX AUTOMATIC INSTALLER AND LAUNCHER
+# ROTA READER - LINUX/MAC AUTOMATIC INSTALLER AND LAUNCHER
 # =============================================================================
 # This script will:
-# 1. Detect your operating system (macOS or Linux)
+# 1. Detect your operating system (Linux or macOS)
 # 2. Check for and install Node.js v20.17.0 if needed
 # 3. Install TypeScript v5.5.2 globally
 # 4. Install Angular CLI v18.2.7 globally
@@ -42,7 +42,7 @@ echo "Please wait, this may take several minutes on first run..."
 echo ""
 echo "Project Structure:"
 echo "  rota-reader/"
-echo "  ├── install-and-run.sh        (this file)"
+echo "  ├── mac-installer.sh          (this file)"
 echo "  ├── frontend/"
 echo "  ├── backend/"
 echo "  └── diagrams/"
@@ -84,7 +84,7 @@ if [ "$PLATFORM" == "linux" ]; then
         echo -e "${RED}[ERROR] This installer requires sudo privileges on Linux${NC}"
         echo ""
         echo "Please run with sudo:"
-        echo "  ${YELLOW}sudo bash install-and-run.sh${NC}"
+        echo "  ${YELLOW}sudo bash mac-installer.sh${NC}"
         echo ""
         exit 1
     fi
@@ -359,7 +359,7 @@ if [ ! -f "package.json" ]; then
     echo ""
     echo "Expected structure:"
     echo "  rota-reader/"
-    echo "  ├── install-and-run.sh  (this file)"
+    echo "  ├── mac-installer.sh  (this file)"
     echo "  ├── backend/"
     echo "  │   └── package.json"
     echo "  └── frontend/"
@@ -494,7 +494,7 @@ echo "Or manually:"
 echo "  ${YELLOW}kill $BACKEND_PID $FRONTEND_PID${NC}"
 echo ""
 echo "To START again later:"
-echo "  ${YELLOW}bash $SCRIPT_DIR/install-and-run.sh${NC}"
+echo "  ${YELLOW}bash $SCRIPT_DIR/mac-installer.sh${NC}"
 echo ""
 echo "============================================================"
 
@@ -528,7 +528,7 @@ echo ""
 echo "Application stopped successfully."
 echo ""
 echo "To start again, run:"
-echo "  bash $SCRIPT_DIR/install-and-run.sh"
+echo "  bash $SCRIPT_DIR/mac-installer.sh"
 echo ""
 EOF
 

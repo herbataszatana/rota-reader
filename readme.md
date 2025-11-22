@@ -12,9 +12,9 @@ After downloading, your `rota-reader` folder should look like this:
 
 ```
 rota-reader/
-├── install-and-run.bat       ← Windows: Double-click this file
-├── install-and-run.sh        ← Mac/Linux: Run this script
-├── stop-app.sh               ← Created after first run (Mac/Linux only)
+├── windows-installer.bat     ← Windows: Double-click this file
+├── linux-installer.sh        ← Linux/Mac: Run this script
+├── stop-app.sh               ← Created after first run (Linux/Mac only)
 ├── README-FOR-USERS.md       ← This file
 ├── VERSIONS.md               ← Technical version info
 ├── frontend/                 ← Frontend application files
@@ -40,17 +40,17 @@ rota-reader/
 ### Step 1: Locate the Installer
 
 1. Open the `rota-reader` folder
-2. Find the file named `install-and-run.bat`
+2. Find the file named `windows-installer.bat`
 
 ### Step 2: Run as Administrator (FIRST TIME ONLY)
 
-1. **Right-click** on `install-and-run.bat`
+1. **Right-click** on `windows-installer.bat`
 2. Select **"Run as administrator"** from the menu
 3. If you see "Windows protected your PC" popup:
-    - Click **"More info"**
-    - Click **"Run anyway"**
+   - Click **"More info"**
+   - Click **"Run anyway"**
 4. If User Account Control asks "Do you want to allow this app to make changes?":
-    - Click **"Yes"**
+   - Click **"Yes"**
 
 ### Step 3: Installation Process
 
@@ -96,8 +96,8 @@ Opening browser...
 When installation completes:
 
 1. **Two black windows will open**:
-    - "Rota Reader - Backend" (runs the server)
-    - "Rota Reader - Frontend" (runs the web interface)
+   - "Rota Reader - Backend" (runs the server)
+   - "Rota Reader - Frontend" (runs the web interface)
 
 2. **Your default web browser will automatically open** to:
    ```
@@ -113,15 +113,15 @@ When installation completes:
 When you're done:
 1. Close the browser tab/window
 2. Close **both** black Command Prompt windows:
-    - "Rota Reader - Backend"
-    - "Rota Reader - Frontend"
+   - "Rota Reader - Backend"
+   - "Rota Reader - Frontend"
 
 Or press `Ctrl + C` in each window, then close them.
 
 ### Starting the Application Again
 
 After the first installation:
-1. Simply **double-click** `install-and-run.bat` (no admin rights needed)
+1. Simply **double-click** `windows-installer.bat` (no admin rights needed)
 2. The app will start in 10-30 seconds
 3. Browser will open automatically
 
@@ -167,7 +167,7 @@ cd ~/Desktop/rota-reader
 Copy and paste this command, then press Enter:
 
 ```bash
-chmod +x linux-and-mac-installer.sh
+chmod +x mac-installer.sh
 ```
 
 This is a one-time step to give the script permission to run.
@@ -177,7 +177,7 @@ This is a one-time step to give the script permission to run.
 Copy and paste this command, then press Enter:
 
 ```bash
-./linux-and-mac-installer.sh
+./mac-installer.sh
 ```
 
 ### Step 5: Enter Your Password
@@ -264,9 +264,9 @@ When installation completes:
    ```
 
 2. The Terminal window stays open and shows:
-    - Backend PID (Process ID)
-    - Frontend PID
-    - Log file locations
+   - Backend PID (Process ID)
+   - Frontend PID
+   - Log file locations
 
 3. **You're ready!** Start using Rota Reader
 
@@ -304,7 +304,7 @@ After first installation:
    ```
 3. Run:
    ```bash
-   ./linux-and-mac-installer.sh
+   ./mac-installer.sh
    ```
 4. The app will start in 10-30 seconds
 
@@ -334,13 +334,13 @@ Or wherever you extracted the folder.
 ### Step 3: Make the Script Executable
 
 ```bash
-chmod +x linux-and-mac-installer.sh
+chmod +x mac-installer.sh
 ```
 
 ### Step 4: Run the Installer with sudo
 
 ```bash
-sudo bash linux-and-mac-installer.sh
+sudo bash mac-installer.sh
 ```
 
 ### Step 5: Enter Your Password
@@ -386,7 +386,7 @@ bash stop-app.sh
 
 ```bash
 cd ~/Downloads/rota-reader
-sudo bash linux-and-mac-installer.sh
+sudo bash mac-installer.sh
 ```
 
 ---
@@ -427,7 +427,7 @@ http://localhost:4200
 
 ### Windows: "Access is denied" or "Permission denied"
 
-**Solution**: Right-click `install-and-run.bat` and select "Run as administrator"
+**Solution**: Right-click `windows-installer.bat` and select "Run as administrator"
 
 ### Windows: "Windows protected your PC" message
 
@@ -439,7 +439,7 @@ http://localhost:4200
 
 **Solution**: Make sure you ran:
 ```bash
-chmod +x linux-and-mac-installer.sh
+chmod +x mac-installer.sh
 ```
 
 ### Mac: "Homebrew installation failed"
@@ -496,8 +496,8 @@ http://localhost:4200
 **Solution**:
 1. Stop the application completely
 2. Delete these folders (if they exist):
-    - `rota-reader/frontend/node_modules`
-    - `rota-reader/backend/node_modules`
+   - `rota-reader/frontend/node_modules`
+   - `rota-reader/backend/node_modules`
 3. Run the installer again (it will reinstall everything)
 
 ---
@@ -544,7 +544,7 @@ Simply delete the `rota-reader` folder.
 **Windows:**
 1. Go to Settings → Apps
 2. Find and uninstall:
-    - Node.js
+   - Node.js
 3. TypeScript and Angular CLI will be removed with Node.js
 
 **Mac:**
@@ -611,5 +611,3 @@ You'll know everything is working when:
 - `diagrams/` - Project documentation and diagrams
 
 ---
-
-*Last updated: November 2024*
